@@ -1,9 +1,7 @@
-name: Train ML Model CI
+name: Train ML Model
 
 on:
   push:
-    branches: [ "main" ]
-  pull_request:
     branches: [ "main" ]
 
 jobs:
@@ -17,15 +15,12 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
-        python-version: '3.10'
+        python-version: "3.12"
 
-    - name: Install dependencies
+    - name: Install MLflow
       run: |
-        cd MLProject
-        pip install --upgrade pip
-        pip install -r requirements.txt
+        python -m pip install --upgrade pip
+        pip install mlflow
 
-    - name: Run modelling script
-      run: |
-        cd MLProject
-        python modelling.py
+    - name: Run MLflow Project
+      run: mlflow run MLProject
