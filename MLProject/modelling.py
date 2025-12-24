@@ -11,7 +11,7 @@ mlflow.set_tracking_uri("file:./mlruns")
 mlflow.set_experiment("training-model")
 
 # ====== LOAD DATA ======
-df = pd.read_csv("data.csv")  # sesuaikan
+df = pd.read_csv("heart_disease_clean.csv") 
 
 X = df.drop("target", axis=1)
 y = df["target"]
