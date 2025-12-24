@@ -1,31 +1,35 @@
-import pandas as pd
 import mlflow
 import mlflow.sklearn
+
+import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn.ensemble import RandomForestClassifier
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score
 
-df = pd.read_csv("heart_disease_clean.csv")
+# ====== SET TRACKING ======
+mlflow.set_tracking_uri("file:./mlruns")
+mlflow.set_experiment("training-model")
 
-X = df.drop(columns=["num"])
-y = df["num"]
+# ====== LOAD DATA ======
+df = pd.read_csv("data.csv")  # sesuaikan
+
+X = df.drop("target", axis=1)
+y = df["target"]
 
 X_train, X_test, y_train, y_test = train_test_split(
-    X, y, test_size=0.2, random_state=42, stratify=y
+    X, y, test_size=0.2, random_state=42
 )
 
-mlflow.autolog()
+# ====== TRAIN ======
+with mlflow.start_run():
+    mlflow.sklearn.autolog()
 
-with mlflow.start_run(run_name="RandomForest"):
-    model = RandomForestClassifier(
-        n_estimators=300,
-        max_depth=10,
-        random_state=42
-    )
+    model = LogisticRegression(max_iter=1000)
     model.fit(X_train, y_train)
 
-    preds = model.predict(X_test)
-    acc = accuracy_score(y_test, preds)
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
 
     mlflow.log_metric("accuracy", acc)
-    mlflow.sklearn.log_model(model, "model")
+
+    print("Accuracy:", acc)
