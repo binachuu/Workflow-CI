@@ -2,7 +2,7 @@ name: train-model
 
 on:
   push:
-    branches: [main]
+    branches: [ main ]
   pull_request:
 
 jobs:
@@ -16,15 +16,17 @@ jobs:
       - name: Set up Miniconda
         uses: conda-incubator/setup-miniconda@v3
         with:
-          auto-update-conda: false
-          activate-environment: false
-          auto-activate-base: false
-          python-version: 3.10
-          use-mamba: true
+          python-version: "3.10"
+          activate-environment: true
+          auto-update-conda: true
+          conda-solver: libmamba
 
       - name: Install MLflow
-        run: pip install mlflow
+        shell: bash -l {0}
+        run: |
+          pip install mlflow
 
       - name: Run training with MLflow Project
-        working-directory: MLProject
-        run: mlflow run .
+        shell: bash -l {0}
+        run: |
+          mlflow run MLProject
