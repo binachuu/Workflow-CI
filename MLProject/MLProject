@@ -1,4 +1,6 @@
-name: heart-disease-model
+name: heart-disease-training
+
+conda_env: conda.yaml
 
 entry_points:
   main:
