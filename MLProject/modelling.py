@@ -4,7 +4,6 @@ import mlflow.sklearn
 
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import accuracy_score
 
 EXPERIMENT_NAME = "training-model"
@@ -15,28 +14,23 @@ def main():
     mlflow.set_experiment(EXPERIMENT_NAME)
     mlflow.autolog()
 
-    df = pd.read_csv(DATA_PATH)
+    with mlflow.start_run():
 
-    df[TARGET_COL] = (df[TARGET_COL] > 0).astype(int)
+        df = pd.read_csv(DATA_PATH)
+        df[TARGET_COL] = (df[TARGET_COL] > 0).astype(int)
 
-    X = df.drop(TARGET_COL, axis=1)
-    y = df[TARGET_COL]
+        X = df.drop(TARGET_COL, axis=1)
+        y = df[TARGET_COL]
 
-    X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=0.2, random_state=42, stratify=y
-    )
+        X_train, X_test, y_train, y_test = train_test_split(
+            X, y, test_size=0.2, random_state=42, stratify=y
+        )
 
-    # Logistic Regression
-    lr = LogisticRegression(max_iter=1000)
-    lr.fit(X_train, y_train)
-    acc_lr = accuracy_score(y_test, lr.predict(X_test))
-    print("Accuracy LR:", acc_lr)
+        model = LogisticRegression(max_iter=1000)
+        model.fit(X_train, y_train)
 
-    # Random Forest
-    rf = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf.fit(X_train, y_train)
-    acc_rf = accuracy_score(y_test, rf.predict(X_test))
-    print("Accuracy RF:", acc_rf)
+        acc = accuracy_score(y_test, model.predict(X_test))
+        print("Accuracy:", acc)
 
 if __name__ == "__main__":
     main()
